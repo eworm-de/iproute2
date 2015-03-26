@@ -389,7 +389,7 @@ static void print_vfinfo(FILE *fp, struct rtattr *vfinfo)
 		print_vf_stats64(fp, vf[IFLA_VF_STATS]);
 }
 
-static void print_num(FILE *fp, unsigned width, uint64_t count)
+static void print_num(FILE *fp, unsigned width, uint64_t count, int use_iec)
 {
 	const char *prefix = "kMGTPE";
 	const unsigned int base = use_iec ? 1024 : 1000;
@@ -466,14 +466,14 @@ static void print_link_stats64(FILE *fp, const struct rtnl_link_stats64 *s,
 		s->rx_compressed ? "compressed" : "", _SL_);
 
 	fprintf(fp, "    ");
-	print_num(fp, 10, s->rx_bytes);
-	print_num(fp, 8, s->rx_packets);
-	print_num(fp, 7, s->rx_errors);
-	print_num(fp, 7, s->rx_dropped);
-	print_num(fp, 7, s->rx_over_errors);
-	print_num(fp, 7, s->multicast);
+	print_num(fp, 10, s->rx_bytes, use_iec);
+	print_num(fp, 8, s->rx_packets, 0);
+	print_num(fp, 7, s->rx_errors, 0);
+	print_num(fp, 7, s->rx_dropped, 0);
+	print_num(fp, 7, s->rx_over_errors,0 );
+	print_num(fp, 7, s->multicast, 0);
 	if (s->rx_compressed)
-		print_num(fp, 7, s->rx_compressed);
+		print_num(fp, 7, s->rx_compressed, 0);
 
 	/* RX error stats */
 	if (show_stats > 1) {
@@ -481,11 +481,11 @@ static void print_link_stats64(FILE *fp, const struct rtnl_link_stats64 *s,
 		fprintf(fp, "    RX errors: length   crc     frame   fifo    missed%s", _SL_);
 
 		fprintf(fp, "               ");
-		print_num(fp, 8, s->rx_length_errors);
-		print_num(fp, 7, s->rx_crc_errors);
-		print_num(fp, 7, s->rx_frame_errors);
-		print_num(fp, 7, s->rx_fifo_errors);
-		print_num(fp, 7, s->rx_missed_errors);
+		print_num(fp, 8, s->rx_length_errors, 0);
+		print_num(fp, 7, s->rx_crc_errors, 0);
+		print_num(fp, 7, s->rx_frame_errors, 0);
+		print_num(fp, 7, s->rx_fifo_errors, 0);
+		print_num(fp, 7, s->rx_missed_errors, 0);
 	}
 	fprintf(fp, "%s", _SL_);
 
@@ -495,14 +495,14 @@ static void print_link_stats64(FILE *fp, const struct rtnl_link_stats64 *s,
 
 
 	fprintf(fp, "    ");
-	print_num(fp, 10, s->tx_bytes);
-	print_num(fp, 8, s->tx_packets);
-	print_num(fp, 7, s->tx_errors);
-	print_num(fp, 7, s->tx_dropped);
-	print_num(fp, 7, s->tx_carrier_errors);
-	print_num(fp, 7, s->collisions);
+	print_num(fp, 10, s->tx_bytes, use_iec);
+	print_num(fp, 8, s->tx_packets, 0);
+	print_num(fp, 7, s->tx_errors, 0);
+	print_num(fp, 7, s->tx_dropped, 0);
+	print_num(fp, 7, s->tx_carrier_errors, 0);
+	print_num(fp, 7, s->collisions, 0);
 	if (s->tx_compressed)
-		print_num(fp, 7, s->tx_compressed);
+		print_num(fp, 7, s->tx_compressed, 0);
 
 	/* TX error stats */
 	if (show_stats > 1) {
@@ -513,12 +513,12 @@ static void print_link_stats64(FILE *fp, const struct rtnl_link_stats64 *s,
 		fprintf(fp, "%s", _SL_);
 
 		fprintf(fp, "               ");
-		print_num(fp, 8, s->tx_aborted_errors);
-		print_num(fp, 7, s->tx_fifo_errors);
-		print_num(fp, 7, s->tx_window_errors);
-		print_num(fp, 7, s->tx_heartbeat_errors);
+		print_num(fp, 8, s->tx_aborted_errors, 0);
+		print_num(fp, 7, s->tx_fifo_errors, 0);
+		print_num(fp, 7, s->tx_window_errors, 0);
+		print_num(fp, 7, s->tx_heartbeat_errors, 0);
 		if (carrier_changes)
-			print_num(fp, 7, *(uint32_t*)RTA_DATA(carrier_changes));
+			print_num(fp, 7, *(uint32_t*)RTA_DATA(carrier_changes), 0);
 	}
 }
 
@@ -531,25 +531,25 @@ static void print_link_stats32(FILE *fp, const struct rtnl_link_stats *s,
 
 
 	fprintf(fp, "    ");
-	print_num(fp, 10, s->rx_bytes);
-	print_num(fp, 8, s->rx_packets);
-	print_num(fp, 7, s->rx_errors);
-	print_num(fp, 7, s->rx_dropped);
-	print_num(fp, 7, s->rx_over_errors);
-	print_num(fp, 7, s->multicast);
+	print_num(fp, 10, s->rx_bytes, use_iec);
+	print_num(fp, 8, s->rx_packets, 0);
+	print_num(fp, 7, s->rx_errors, 0);
+	print_num(fp, 7, s->rx_dropped, 0);
+	print_num(fp, 7, s->rx_over_errors, 0);
+	print_num(fp, 7, s->multicast, 0);
 	if (s->rx_compressed)
-		print_num(fp, 7, s->rx_compressed);
+		print_num(fp, 7, s->rx_compressed, 0);
 
 	/* RX error stats */
 	if (show_stats > 1) {
 		fprintf(fp, "%s", _SL_);
 		fprintf(fp, "    RX errors: length   crc     frame   fifo    missed%s", _SL_);
 		fprintf(fp, "               ");
-		print_num(fp, 8, s->rx_length_errors);
-		print_num(fp, 7, s->rx_crc_errors);
-		print_num(fp, 7, s->rx_frame_errors);
-		print_num(fp, 7, s->rx_fifo_errors);
-		print_num(fp, 7, s->rx_missed_errors);
+		print_num(fp, 8, s->rx_length_errors, 0);
+		print_num(fp, 7, s->rx_crc_errors, 0);
+		print_num(fp, 7, s->rx_frame_errors, 0);
+		print_num(fp, 7, s->rx_fifo_errors, 0);
+		print_num(fp, 7, s->rx_missed_errors, 0);
 	}
 	fprintf(fp, "%s", _SL_);
 
@@ -558,14 +558,14 @@ static void print_link_stats32(FILE *fp, const struct rtnl_link_stats *s,
 		s->tx_compressed ? "compressed" : "", _SL_);
 
 	fprintf(fp, "    ");
-	print_num(fp, 10, s->tx_bytes);
-	print_num(fp, 8, s->tx_packets);
-	print_num(fp, 7, s->tx_errors);
-	print_num(fp, 7, s->tx_dropped);
-	print_num(fp, 7, s->tx_carrier_errors);
-	print_num(fp, 7, s->collisions);
+	print_num(fp, 10, s->tx_bytes, use_iec);
+	print_num(fp, 8, s->tx_packets, 0);
+	print_num(fp, 7, s->tx_errors, 0);
+	print_num(fp, 7, s->tx_dropped, 0);
+	print_num(fp, 7, s->tx_carrier_errors, 0);
+	print_num(fp, 7, s->collisions, 0);
 	if (s->tx_compressed)
-		print_num(fp, 7, s->tx_compressed);
+		print_num(fp, 7, s->tx_compressed, 0);
 
 	/* TX error stats */
 	if (show_stats > 1) {
@@ -576,12 +576,12 @@ static void print_link_stats32(FILE *fp, const struct rtnl_link_stats *s,
 		fprintf(fp, "%s", _SL_);
 
 		fprintf(fp, "               ");
-		print_num(fp, 8, s->tx_aborted_errors);
-		print_num(fp, 7, s->tx_fifo_errors);
-		print_num(fp, 7, s->tx_window_errors);
-		print_num(fp, 7, s->tx_heartbeat_errors);
+		print_num(fp, 8, s->tx_aborted_errors, 0);
+		print_num(fp, 7, s->tx_fifo_errors, 0);
+		print_num(fp, 7, s->tx_window_errors, 0);
+		print_num(fp, 7, s->tx_heartbeat_errors, 0);
 		if (carrier_changes)
-			print_num(fp, 7, *(uint32_t*)RTA_DATA(carrier_changes));
+			print_num(fp, 7, *(uint32_t*)RTA_DATA(carrier_changes), 0);
 	}
 }
 
