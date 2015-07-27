@@ -18,6 +18,7 @@
 #include <netinet/in.h>
 #include <string.h>
 #include <errno.h>
+#include <locale.h>
 
 #include "SNAPSHOT.h"
 #include "utils.h"
@@ -286,6 +287,8 @@ int main(int argc, char **argv)
 
 	if (rtnl_open(&rth, 0) < 0)
 		exit(1);
+
+	setlocale(LC_ALL, "");
 
 	if (strlen(basename) > 2)
 		return do_cmd(basename+2, argc, argv);
