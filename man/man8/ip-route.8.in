@@ -40,6 +40,8 @@ ip-route \- routing table management
 .IR TOS " ] [ "
 .B  vrf
 .IR NAME " ] [ "
+.B  uid
+.IR NUMBER " ] [ "
 .B  ipproto
 .IR PROTOCOL " ] [ "
 .B  sport
@@ -1381,6 +1383,10 @@ the firewall mark
 .TP
 .BI vrf " NAME"
 force the vrf device on which this packet will be routed.
+
+.TP
+.BI uid " NUMBER"
+the user ID as seen by the route lookup
 
 .TP
 .BI ipproto " PROTOCOL"
